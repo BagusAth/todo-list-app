@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List Application</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-800 text-white min-h-screen p-6">
+    <div class="container mx-auto max-w-5xl">
+        <h1 class="text-3xl font-bold mb-6 text-center">Todo List</h1>
+        
+        <!-- Stats Section -->
+        <div class="grid grid-cols-4 gap-4 mb-8">
+            <div class="stat-card">
+                <h3>TOTAL TASKS</h3>
+                <div class="flex items-center gap-2">
+                    <span id="total-tasks" class="text-purple-500">0</span>
+                    <i class="fas fa-tasks text-purple-500"></i>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <h3>COMPLETED</h3>
+                <div class="flex items-center gap-2">
+                    <span id="completed-tasks" class="text-emerald-500">0</span>
+                    <i class="fas fa-check-circle text-emerald-500"></i>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <h3>PENDING</h3>
+                <div class="flex items-center gap-2">
+                    <span id="pending-tasks" class="text-amber-500">0</span>
+                    <i class="fas fa-clock text-amber-500"></i>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <h3>PROGRESS</h3>
+                <div class="flex items-center gap-2">
+                    <span id="progress-percentage" class="text-sky-500">0%</span>
+                    <i class="fas fa-chart-line text-sky-500"></i>
+                </div>
+            </div>
+        </div>
+        
+        <hr class="border-gray-600 mb-8">
+        
+        <!-- Input Form Section -->
+        <div class="flex gap-4 mb-8">
+            <div class="flex-1">
+                <input type="text" id="todo-input" placeholder="Add a todo..." class="input-field" required>
+                <div id="todo-error" class="text-red-500 text-sm hidden">Please enter a todo item</div>
+            </div>
+            
+            <div class="w-72">
+                <input type="date" id="date-input" class="input-field" required>
+                <div id="date-error" class="text-red-500 text-sm hidden">Please select a date</div>
+            </div>
+            
+            <button id="add-btn" class="bg-fuchsia-600 hover:bg-fuchsia-700 text-white px-5 py-3 rounded-lg transition">
+                <i class="fas fa-plus"></i>
+            </button>
+        </div>
+        
+        <!-- Filter Section -->
+        <div class="flex gap-4 mb-6 items-center">
+            <div class="relative flex-1">
+                <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                <input type="text" id="search-input" placeholder="Search tasks... (Ctrl+F)" class="input-field pl-12">
+            </div>
+            
+            <div class="flex gap-2">
+                <button id="sort-btn" class="filter-btn">
+                    <i class="fas fa-sort"></i> SORT
+                </button>
+                
+                <button id="filter-btn" class="filter-btn">
+                    <i class="fas fa-filter"></i> FILTER
+                </button>
+                
+                <button id="delete-all-btn" class="bg-red-400 hover:bg-red-500 text-white px-4 py-2 rounded-lg transition">
+                    <i class="fas fa-trash"></i> DELETE ALL
+                </button>
+            </div>
+        </div>
+        
+        <!-- Task List Section -->
+        <div class="bg-slate-900 rounded-lg overflow-hidden">
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="border-b border-gray-700">
+                        <th class="p-4 w-1/2">TASK</th>
+                        <th class="p-4 w-1/6">DUE DATE</th>
+                        <th class="p-4 w-1/6">STATUS</th>
+                        <th class="p-4 w-1/6 text-right">ACTIONS</th>
+                    </tr>
+                </thead>
+                <tbody id="todo-list">
+                    <!-- Tasks will be inserted here -->
+                </tbody>
+            </table>
+            
+            <!-- Empty State -->
+            <div id="empty-state" class="py-12 text-center text-gray-400">
+                <p>No tasks found</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal for Filter Options -->
+    <div id="filter-modal" class="modal hidden">
+        <div class="modal-content bg-slate-700 p-6 rounded-lg w-80">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold">Filter Tasks</h3>
+                <button id="close-filter-modal" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block mb-2">Status</label>
+                    <select id="status-filter" class="input-field">
+                        <option value="all">All</option>
+                        <option value="pending">Pending</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block mb-2">Date Range</label>
+                    <div class="flex gap-2">
+                        <input type="date" id="date-from" class="input-field flex-1">
+                        <input type="date" id="date-to" class="input-field flex-1">
+                    </div>
+                </div>
+                <button id="apply-filter" class="bg-fuchsia-600 hover:bg-fuchsia-700 text-white px-4 py-2 rounded-lg transition w-full">
+                    Apply Filter
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/script.js"></script>
+</body>
+</html>
