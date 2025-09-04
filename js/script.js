@@ -1,4 +1,3 @@
-// DOM Elements
 const todoInput = document.getElementById('todo-input');
 const dateInput = document.getElementById('date-input');
 const addBtn = document.getElementById('add-btn');
@@ -14,18 +13,13 @@ const applyFilterBtn = document.getElementById('apply-filter');
 const statusFilter = document.getElementById('status-filter');
 const dateFromFilter = document.getElementById('date-from');
 const dateToFilter = document.getElementById('date-to');
-
-// Error elements
 const todoError = document.getElementById('todo-error');
 const dateError = document.getElementById('date-error');
-
-// Stats elements
 const totalTasksEl = document.getElementById('total-tasks');
 const completedTasksEl = document.getElementById('completed-tasks');
 const pendingTasksEl = document.getElementById('pending-tasks');
 const progressPercentageEl = document.getElementById('progress-percentage');
 
-// State
 let todos = JSON.parse(localStorage.getItem('todos')) || [];
 let currentFilter = {
     status: 'all',
@@ -33,21 +27,17 @@ let currentFilter = {
     dateTo: '',
     searchTerm: ''
 };
-let sortDirection = 'asc'; // 'asc' or 'desc'
+let sortDirection = 'asc';
 let editingId = null;
 
-// Initialize the app
 function init() {
-    // Set today as the minimum date for date input
     const today = new Date().toISOString().split('T')[0];
     dateInput.min = today;
     dateInput.value = today;
-    
-    // Load todos from localStorage
+
     renderTodos();
     updateStats();
-    
-    // Set up event listeners
+
     addBtn.addEventListener('click', handleAddTodo);
     todoInput.addEventListener('keypress', e => {
         if (e.key === 'Enter') handleAddTodo();
@@ -62,17 +52,14 @@ function init() {
     });
     applyFilterBtn.addEventListener('click', applyFilter);
     deleteAllBtn.addEventListener('click', handleDeleteAll);
-    
-    // Close modal when clicking outside
+
     window.addEventListener('click', e => {
         if (e.target === filterModal) {
             filterModal.classList.add('hidden');
         }
     });
-    
-    // Keyboard shortcuts
+
     document.addEventListener('keydown', e => {
-        // Ctrl+F for search focus
         if (e.ctrlKey && e.key === 'f') {
             e.preventDefault();
             searchInput.focus();
@@ -80,12 +67,10 @@ function init() {
     });
 }
 
-// Handle adding a new todo
 function handleAddTodo() {
     const todoText = todoInput.value.trim();
     const dueDate = dateInput.value;
-    
-    // Validate inputs
+
     let isValid = true;
     
     if (!todoText) {
@@ -105,7 +90,6 @@ function handleAddTodo() {
     if (!isValid) return;
     
     if (editingId !== null) {
-        // Update existing todo
         const index = todos.findIndex(todo => todo.id === editingId);
         if (index !== -1) {
             todos[index].text = todoText;
@@ -114,7 +98,6 @@ function handleAddTodo() {
             addBtn.innerHTML = '<i class="fas fa-plus"></i>';
         }
     } else {
-        // Add new todo
         const newTodo = {
             id: Date.now(),
             text: todoText,
@@ -125,19 +108,16 @@ function handleAddTodo() {
         
         todos.push(newTodo);
     }
-    
-    // Clear input fields
+
     todoInput.value = '';
     const today = new Date().toISOString().split('T')[0];
     dateInput.value = today;
-    
-    // Save and render
+
     saveTodos();
     renderTodos();
     updateStats();
 }
 
-// Handle editing a todo
 function handleEditTodo(id) {
     const todo = todos.find(todo => todo.id === id);
     if (!todo) return;
@@ -150,7 +130,6 @@ function handleEditTodo(id) {
     todoInput.focus();
 }
 
-// Handle toggling todo completion
 function handleToggleTodo(id) {
     const index = todos.findIndex(todo => todo.id === id);
     if (index !== -1) {
@@ -161,7 +140,6 @@ function handleToggleTodo(id) {
     }
 }
 
-// Handle deleting a todo
 function handleDeleteTodo(id) {
     todos = todos.filter(todo => todo.id !== id);
     saveTodos();
@@ -169,7 +147,6 @@ function handleDeleteTodo(id) {
     updateStats();
 }
 
-// Handle deleting all todos
 function handleDeleteAll() {
     if (todos.length === 0) return;
     
@@ -181,19 +158,16 @@ function handleDeleteAll() {
     }
 }
 
-// Handle searching todos
 function handleSearch() {
     currentFilter.searchTerm = searchInput.value.trim().toLowerCase();
     renderTodos();
 }
 
-// Handle sorting todos
 function handleSort() {
     sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
     renderTodos();
 }
 
-// Apply filter from modal
 function applyFilter() {
     currentFilter.status = statusFilter.value;
     currentFilter.dateFrom = dateFromFilter.value;
@@ -203,20 +177,16 @@ function applyFilter() {
     renderTodos();
 }
 
-// Filter todos based on current filters
 function filterTodos(todoList) {
     return todoList.filter(todo => {
-        // Filter by status
         if (currentFilter.status !== 'all') {
             if (currentFilter.status === 'completed' && !todo.completed) return false;
             if (currentFilter.status === 'pending' && todo.completed) return false;
         }
-        
-        // Filter by date range
+
         if (currentFilter.dateFrom && todo.dueDate < currentFilter.dateFrom) return false;
         if (currentFilter.dateTo && todo.dueDate > currentFilter.dateTo) return false;
-        
-        // Filter by search term
+
         if (currentFilter.searchTerm && !todo.text.toLowerCase().includes(currentFilter.searchTerm)) {
             return false;
         }
@@ -225,7 +195,6 @@ function filterTodos(todoList) {
     });
 }
 
-// Sort todos based on current sort direction
 function sortTodos(todoList) {
     return [...todoList].sort((a, b) => {
         if (sortDirection === 'asc') {
@@ -236,22 +205,17 @@ function sortTodos(todoList) {
     });
 }
 
-// Render todos to the DOM
 function renderTodos() {
-    // Filter and sort todos
     const filteredTodos = filterTodos(todos);
     const sortedTodos = sortTodos(filteredTodos);
-    
-    // Clear todo list
+
     todoList.innerHTML = '';
-    
-    // Show empty state if no todos
+
     if (sortedTodos.length === 0) {
         emptyState.classList.remove('hidden');
     } else {
         emptyState.classList.add('hidden');
-        
-        // Render todos
+
         sortedTodos.forEach(todo => {
             const row = document.createElement('tr');
             row.className = `todo-item ${todo.completed ? 'completed' : ''} border-b border-gray-700`;
@@ -288,8 +252,7 @@ function renderTodos() {
                     </div>
                 </td>
             `;
-            
-            // Add event listeners to buttons
+
             const completeBtn = row.querySelector('.complete-btn');
             const editBtn = row.querySelector('.edit-btn');
             const deleteBtn = row.querySelector('.delete-btn');
@@ -303,7 +266,6 @@ function renderTodos() {
     }
 }
 
-// Update stats
 function updateStats() {
     const totalTasks = todos.length;
     const completedTasks = todos.filter(todo => todo.completed).length;
@@ -316,12 +278,10 @@ function updateStats() {
     progressPercentageEl.textContent = `${progressPercentage}%`;
 }
 
-// Save todos to localStorage
 function saveTodos() {
     localStorage.setItem('todos', JSON.stringify(todos));
 }
 
-// Format date for display
 function formatDate(dateString) {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { 
@@ -331,5 +291,4 @@ function formatDate(dateString) {
     });
 }
 
-// Initialize the app
 document.addEventListener('DOMContentLoaded', init);
